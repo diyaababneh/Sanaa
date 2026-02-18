@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Sanaa — Across the Universe ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,500&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose:      #ff6b8a;
+  --rose2:     #ff4d70;
+  --rose-pale: #ffc4d4;
+  --gold:      #f0c96a;
+  --gold2:     #c9943a;
+  --nebula1:   #8b3fa8;
+  --nebula2:   #3a6fd8;
+  --nebula3:   #d84a7a;
+  --nebula4:   #2ec4b6;
+  --green:     #3d9e5e;
+  --green2:    #61c97e;
+  --cream:     #fff8ee;
+  --deep:      #04020a;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--deep);
+  overflow: hidden;
+  font-family: 'Cormorant Garamond', serif;
+  cursor: default;
+}
+
+/* ═══════════════════════════════════════
+   CANVAS — cosmic background
+═══════════════════════════════════════ */
+#cosmos { position: fixed; inset: 0; z-index: 0; }
+
+/* ═══════════════════════════════════════
+   NEBULA LAYERS (CSS)
+═══════════════════════════════════════ */
+.nebula-layer {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+}
+.nebula-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+  animation: nebulaDrift var(--nd, 20s) ease-in-out infinite alternate;
+}
+@keyframes nebulaDrift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(var(--dx,30px), var(--dy,20px)) scale(var(--ds,1.1)); }
+}
+
+/* ═══════════════════════════════════════
+   SCENE WRAPPER
+═══════════════════════════════════════ */
+.scene {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  padding: 16px;
+}
+
+/* ═══════════════════════════════════════
+   GLOW HALO behind flower
+═══════════════════════════════════════ */
+.halo {
+  position: absolute;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,107,138,0.22) 0%, rgba(139,63,168,0.12) 50%, transparent 75%);
+  animation: haloBreath 4s ease-in-out infinite;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+}
+@keyframes haloBreath {
+  0%,100% { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+  50%      { transform: translate(-50%,-50%) scale(1.18); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════
+   ORBITING PARTICLES
+═══════════════════════════════════════ */
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+.orbit-dot {
+  position: absolute;
+  border-radius: 50%;
+  top: 0; left: 50%;
+  transform-origin: 50% 50%;
+  animation: orbitSpin var(--os, 8s) linear infinite;
+}
+@keyframes orbitSpin {
+  from { transform: rotate(var(--start,0deg)) translateX(var(--r,80px)) rotate(0deg); }
+  to   { transform: rotate(calc(var(--start,0deg) + 360deg)) translateX(var(--r,80px)) rotate(-360deg); }
+}
+
+/* ═══════════════════════════════════════
+   FLOWER WRAPPER
+═══════════════════════════════════════ */
+.flower-outer {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  z-index: 5;
+}
+.flower-wrap {
+  animation: floatFlower 5s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 18px rgba(255,107,138,0.7))
+    drop-shadow(0 0 50px rgba(139,63,168,0.4))
+    drop-shadow(0 0 90px rgba(255,77,112,0.2));
+}
+@keyframes floatFlower {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-18px) rotate(1deg); }
+}
+svg.tulip { width: min(260px, 60vw); height: auto; overflow: visible; }
+
+/* Tulip petal bloom */
+.tp {
+  animation: tulipOpen 1.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.tp:nth-child(1){animation-delay:.05s; transform-origin:200px 260px;}
+.tp:nth-child(2){animation-delay:.15s; transform-origin:200px 260px;}
+.tp:nth-child(3){animation-delay:.25s; transform-origin:200px 260px;}
+.tp:nth-child(4){animation-delay:.35s; transform-origin:200px 260px;}
+.tp:nth-child(5){animation-delay:.45s; transform-origin:200px 260px;}
+.tp:nth-child(6){animation-delay:.55s; transform-origin:200px 260px;}
+@keyframes tulipOpen {
+  from { transform:scaleY(0.05) scaleX(0.2); opacity:0; }
+  to   { transform:scaleY(1) scaleX(1);       opacity:1; }
+}
+.stem-p {
+  stroke-dasharray: 350; stroke-dashoffset: 350;
+  animation: drawStem 1s .05s ease forwards;
+}
+@keyframes drawStem { to { stroke-dashoffset: 0; } }
+.leaf-l { transform-origin:195px 335px; animation:leafOpen 1s .7s cubic-bezier(.34,1.56,.64,1) both; }
+.leaf-r { transform-origin:205px 298px; animation:leafOpen 1s .9s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes leafOpen {
+  from { transform:scale(0) rotate(-15deg); opacity:0; }
+  to   { transform:scale(1) rotate(0deg); opacity:1; }
+}
+.shimmer-e {
+  transform-origin:200px 205px;
+  animation:shimmerOut 3.5s 1.8s ease-in-out infinite;
+  opacity:0;
+}
+@keyframes shimmerOut {
+  0%  { transform:scale(.5); opacity:.9; }
+  100%{ transform:scale(2.8); opacity:0; }
+}
+
+/* ═══════════════════════════════════════
+   NAMES
+═══════════════════════════════════════ */
+.to-block {
+  text-align: center;
+  margin-top: 6px;
+  animation: riseIn 1s 1.6s both;
+}
+.to-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.42em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 3px;
+}
+.to-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+  color: var(--rose-pale);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 20px rgba(255,107,138,0.5);
+}
+
+/* ═══════════════════════════════════════
+   MESSAGE CARD
+═══════════════════════════════════════ */
+.card {
+  margin-top: 16px;
+  background: linear-gradient(135deg,
+    rgba(139,63,168,0.08),
+    rgba(255,107,138,0.07),
+    rgba(58,111,216,0.06));
+  border: 1px solid rgba(240,201,106,0.2);
+  border-radius: 3px;
+  padding: 26px 36px 30px;
+  text-align: center;
+  max-width: 420px;
+  width: 92vw;
+  animation: riseIn 1.2s 2.1s both;
+  backdrop-filter: blur(14px);
+  position: relative;
+}
+/* corner ornaments */
+.card::before,.card::after {
+  content:''; position:absolute;
+  width:22px; height:22px;
+  border-color:rgba(240,201,106,0.4); border-style:solid; pointer-events:none;
+}
+.card::before { top:7px; left:7px; border-width:1px 0 0 1px; }
+.card::after  { bottom:7px; right:7px; border-width:0 1px 1px 0; }
+
+/* inner corner star accents */
+.card-star {
+  position:absolute; font-size:.7rem; color:var(--gold); opacity:0.5;
+  animation: starPulse 2.5s ease-in-out infinite;
+}
+.card-star:nth-child(1){top:4px;right:10px;}
+.card-star:nth-child(2){bottom:4px;left:10px;animation-delay:.8s;}
+@keyframes starPulse { 0%,100%{opacity:.3;transform:scale(.8);} 50%{opacity:.8;transform:scale(1.2);} }
+
+@keyframes riseIn {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.card-eyebrow {
+  font-family:'Cinzel', serif;
+  font-size:0.58rem;
+  letter-spacing:0.4em;
+  color:var(--gold);
+  text-transform:uppercase;
+  opacity:0.7;
+  display:block;
+  margin-bottom:12px;
+}
+.card-msg {
+  font-family:'Playfair Display', serif;
+  font-style:italic;
+  font-size:clamp(1.15rem,4vw,1.6rem);
+  color:var(--cream);
+  line-height:1.5;
+  text-shadow: 0 2px 20px rgba(255,107,138,0.15);
+}
+.from-row {
+  margin-top:18px;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.from-line-div { flex:1; max-width:45px; height:1px; background:rgba(240,201,106,0.25); }
+.from-inner { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.from-sub {
+  font-size:0.75rem; font-style:italic;
+  color:rgba(255,196,212,0.7); letter-spacing:0.08em;
+}
+.from-name {
+  font-family:'Playfair Display', serif;
+  font-style:italic;
+  font-size:1.05rem;
+  color:var(--gold);
+  letter-spacing:0.04em;
+  text-shadow:0 0 15px rgba(240,201,106,0.4);
+}
+
+.hearts {
+  margin-top:14px;
+  display:flex; justify-content:center; gap:8px;
+}
+.h {
+  font-size:0.85rem;
+  animation:hbeat 1.6s ease-in-out infinite;
+  display:inline-block;
+}
+.h:nth-child(1){color:var(--rose);   animation-delay:0s;}
+.h:nth-child(2){color:var(--rose2);  animation-delay:.2s;}
+.h:nth-child(3){color:var(--gold);   animation-delay:.4s;}
+.h:nth-child(4){color:var(--rose-pale);animation-delay:.6s;}
+.h:nth-child(5){color:var(--rose2);  animation-delay:.8s;}
+@keyframes hbeat {
+  0%,100%{transform:scale(1);}
+  40%{transform:scale(1.5);}
+}
+
+/* ═══════════════════════════════════════
+   SHOOTING STARS (CSS only)
+═══════════════════════════════════════ */
+.shoot {
+  position:fixed;
+  top:var(--sy,15%); left:-5%;
+  width:var(--sw,120px); height:1px;
+  background:linear-gradient(to right, transparent, white, transparent);
+  opacity:0;
+  animation:shoot var(--sd,6s) var(--sdelay,2s) ease-in infinite;
+  transform:rotate(var(--srot,-20deg));
+  z-index:2; pointer-events:none;
+}
+@keyframes shoot {
+  0%  { left:-10%; opacity:0; }
+  5%  { opacity:1; }
+  30% { left:110%; opacity:0; }
+  100%{ left:110%; opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cosmic canvas -->
+<canvas id="cosmos"></canvas>
+
+<!-- Nebula CSS blobs -->
+<div class="nebula-layer" id="nebulas"></div>
+
+<!-- Shooting stars -->
+<div id="shoots"></div>
+
+<!-- MAIN SCENE -->
+<div class="scene">
+  <div class="flower-outer">
+
+    <!-- Orbit rings -->
+    <div id="orbits" style="position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;"></div>
+
+    <!-- Glow halo -->
+    <div class="halo"></div>
+
+    <!-- TULIP SVG -->
+    <div class="flower-wrap">
+      <svg class="tulip" viewBox="0 0 400 450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pg1" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%"   stop-color="#ffacc4"/>
+            <stop offset="35%"  stop-color="#ff6b8a"/>
+            <stop offset="100%" stop-color="#7a1030"/>
+          </linearGradient>
+          <linearGradient id="pg2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#ffe0ea"/>
+            <stop offset="40%"  stop-color="#ff4d70"/>
+            <stop offset="100%" stop-color="#8a1428"/>
+          </linearGradient>
+          <linearGradient id="pg3" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%"   stop-color="#fff0f5"/>
+            <stop offset="30%"  stop-color="#ff8fab"/>
+            <stop offset="100%" stop-color="#9c1f33"/>
+          </linearGradient>
+          <linearGradient id="stemG" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"  stop-color="#1e4d2d"/>
+            <stop offset="50%" stop-color="#4aab68"/>
+            <stop offset="100%" stop-color="#1e4d2d"/>
+          </linearGradient>
+          <linearGradient id="leafG" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"  stop-color="#5dcf7e"/>
+            <stop offset="100%" stop-color="#1e4d2d"/>
+          </linearGradient>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="sg" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Cosmic shimmer on petals -->
+          <radialGradient id="shimG" cx="50%" cy="0%" r="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Stem -->
+        <path class="stem-p"
+          d="M200 268 Q196 305 193 345 Q190 375 192 425"
+          stroke="url(#stemG)" stroke-width="9" fill="none" stroke-linecap="round"/>
+
+        <!-- Left long leaf -->
+        <path class="leaf-l"
+          d="M196 342 C178 315 152 278 144 238 C159 262 181 300 195 328 Z"
+          fill="url(#leafG)"/>
+        <!-- Right long leaf -->
+        <path class="leaf-r"
+          d="M197 305 C216 278 240 248 252 215 C236 240 212 270 198 296 Z"
+          fill="url(#leafG)"/>
+
+        <!-- ── TULIP CUP ── 6 petals -->
+        <g filter="url(#glow)">
+          <!-- Outer left -->
+          <path class="tp"
+            d="M200 265 C182 238 162 202 164 162 C168 135 182 117 200 110
+               C200 150 199 218 200 265 Z"
+            fill="url(#pg1)"/>
+          <!-- Outer right -->
+          <path class="tp"
+            d="M200 265 C218 238 238 202 236 162 C232 135 218 117 200 110
+               C200 150 201 218 200 265 Z"
+            fill="url(#pg1)"/>
+          <!-- Back center top -->
+          <path class="tp"
+            d="M200 265 C188 228 183 183 186 143
+               C190 120 195 106 200 98
+               C205 106 210 120 214 143
+               C217 183 212 228 200 265 Z"
+            fill="url(#pg2)"/>
+          <!-- Inner left -->
+          <path class="tp"
+            d="M200 265 C184 242 170 212 172 180
+               C176 153 190 137 200 130
+               C200 164 199 222 200 265 Z"
+            fill="url(#pg2)" opacity=".92"/>
+          <!-- Inner right -->
+          <path class="tp"
+            d="M200 265 C216 242 230 212 228 180
+               C224 153 210 137 200 130
+               C200 164 201 222 200 265 Z"
+            fill="url(#pg2)" opacity=".92"/>
+          <!-- Front bright center -->
+          <path class="tp"
+            d="M200 265 C191 232 187 195 189 160
+               C193 136 197 120 200 112
+               C203 120 207 136 211 160
+               C213 195 209 232 200 265 Z"
+            fill="url(#pg3)" opacity=".97"/>
+        </g>
+
+        <!-- Shimmer overlay on petals -->
+        <path class="tp"
+          d="M200 265 C191 232 187 195 189 160
+             C193 136 197 120 200 112
+             C203 120 207 136 211 160
+             C213 195 209 232 200 265 Z"
+          fill="url(#shimG)" opacity=".4"/>
+
+        <!-- Vein lines -->
+        <g opacity=".15" stroke="#fff" stroke-width="0.8" fill="none">
+          <path d="M200 262 Q197 215 196 168"/>
+          <path d="M200 262 Q204 215 205 168"/>
+          <path d="M200 262 Q191 222 184 178"/>
+          <path d="M200 262 Q209 222 216 178"/>
+        </g>
+
+        <!-- Stamen glow -->
+        <circle cx="200" cy="145" r="5" fill="rgba(255,220,180,0.6)" filter="url(#sg)"/>
+        <circle cx="194" cy="155" r="3" fill="rgba(255,200,150,0.5)" filter="url(#sg)"/>
+        <circle cx="206" cy="155" r="3" fill="rgba(255,200,150,0.5)" filter="url(#sg)"/>
+
+        <!-- Cosmic shimmer ring -->
+        <ellipse class="shimmer-e" cx="200" cy="205" rx="45" ry="22"
+          fill="none" stroke="rgba(240,201,106,0.6)" stroke-width="1.2"/>
+
+        <!-- Tiny star inside tulip -->
+        <text x="200" y="152" text-anchor="middle"
+          font-size="11" fill="rgba(255,240,200,0.85)"
+          style="animation:heartPop .5s 1.4s cubic-bezier(.34,1.56,.64,1) both;
+                 display:inline-block; transform-origin:200px 152px;">✦</text>
+      </svg>
+    </div>
+
+    <!-- To name -->
+    <div class="to-block">
+      <span class="to-eyebrow">across the universe, for</span>
+      <div class="to-name">Sanaa Alqawasmi</div>
+    </div>
+  </div>
+
+  <!-- Message card -->
+  <div class="card">
+    <span class="card-star">✦</span>
+    <span class="card-star">✦</span>
+
+    <span class="card-eyebrow">a message written in the stars</span>
+    <p class="card-msg">
+      "In all the infinite universe,<br>
+      every star led me to you —<br>
+      I love you more than all the lines<br>
+      of code I'll ever write"
+    </p>
+
+    <div class="from-row">
+      <div class="from-line-div"></div>
+      <div class="from-inner">
+        <span class="from-sub">with all my love,</span>
+        <span class="from-name">Diya Ababneh ♥</span>
+      </div>
+      <div class="from-line-div"></div>
+    </div>
+
+    <div class="hearts">
+      <span class="h">♥</span>
+      <span class="h">♥</span>
+      <span class="h">♥</span>
+      <span class="h">♥</span>
+      <span class="h">♥</span>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes heartPop {
+  from{transform:scale(0);opacity:0;}
+  to{transform:scale(1);opacity:.85;}
+}
+</style>
+
+<script>
+/* ══════════════════════════════════════════
+   COSMIC CANVAS — stars, nebula, galaxy dust
+══════════════════════════════════════════ */
+const canvas = document.getElementById('cosmos');
+const ctx    = canvas.getContext('2d');
+let W, H, stars=[], dustClouds=[];
+
+function resize(){
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', ()=>{ resize(); initScene(); });
+
+/* Deep space gradient background */
+function drawBg(){
+  const g = ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.75);
+  g.addColorStop(0,   '#0e0520');
+  g.addColorStop(0.35,'#080315');
+  g.addColorStop(0.7, '#04020e');
+  g.addColorStop(1,   '#020108');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+}
+
+/* Stars */
+function initScene(){
+  stars = [];
+  for(let i=0;i<320;i++){
+    stars.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      r: Math.random()*1.6+.2,
+      a: Math.random(),
+      da: (Math.random()*.006+.002)*(Math.random()<.5?1:-1),
+      color: ['#fff','#ffe8d0','#d0e8ff','#ffd0e8'][Math.floor(Math.random()*4)]
+    });
+  }
+  // Dust clouds for galaxy feel
+  dustClouds = [];
+  for(let i=0;i<6;i++){
+    dustClouds.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      rx: Math.random()*200+100,
+      ry: Math.random()*80+40,
+      angle: Math.random()*Math.PI,
+      hue: [280,220,340,180,310][Math.floor(Math.random()*5)],
+      a: Math.random()*.08+.03,
+      da: (Math.random()*.0005)*(Math.random()<.5?1:-1)
+    });
+  }
+}
+initScene();
+
+/* Shooting stars state */
+const shoots2=[];
+function spawnShoot(){
+  shoots2.push({
+    x: Math.random()*W*.3,
+    y: Math.random()*H*.5,
+    vx: Math.random()*12+8,
+    vy: Math.random()*5+2,
+    len: Math.random()*120+60,
+    a: 1, life:1
+  });
+}
+setInterval(spawnShoot, 2800);
+
+/* Main render loop */
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawBg();
+
+  // Galaxy dust
+  dustClouds.forEach(d=>{
+    d.a += d.da;
+    if(d.a<.02) d.da=Math.abs(d.da);
+    if(d.a>.12) d.da=-Math.abs(d.da);
+    ctx.save();
+    ctx.translate(d.x,d.y);
+    ctx.rotate(d.angle);
+    const g=ctx.createRadialGradient(0,0,0,0,0,d.rx);
+    g.addColorStop(0,  `hsla(${d.hue},70%,60%,${d.a})`);
+    g.addColorStop(.5, `hsla(${d.hue},60%,40%,${d.a*.5})`);
+    g.addColorStop(1,  'transparent');
+    ctx.scale(1, d.ry/d.rx);
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.arc(0,0,d.rx,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Stars
+  stars.forEach(s=>{
+    s.a += s.da;
+    if(s.a<=.05||s.a>=1){ s.da*=-1; s.a=Math.max(.05,Math.min(1,s.a)); }
+    ctx.globalAlpha=s.a;
+    ctx.fillStyle=s.color;
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fill();
+    // Bright star cross
+    if(s.r>1.2){
+      ctx.globalAlpha=s.a*.4;
+      ctx.strokeStyle=s.color;
+      ctx.lineWidth=.5;
+      ctx.beginPath();
+      ctx.moveTo(s.x-s.r*3,s.y); ctx.lineTo(s.x+s.r*3,s.y);
+      ctx.moveTo(s.x,s.y-s.r*3); ctx.lineTo(s.x,s.y+s.r*3);
+      ctx.stroke();
+    }
+  });
+  ctx.globalAlpha=1;
+
+  // Shooting stars
+  shoots2.forEach((s,i)=>{
+    s.x+=s.vx; s.y+=s.vy; s.life-=.018;
+    if(s.life<=0){ shoots2.splice(i,1); return; }
+    const g=ctx.createLinearGradient(s.x,s.y,s.x-s.vx/s.vx*s.len,s.y-s.vy/s.vx*s.len);
+    g.addColorStop(0,'rgba(255,255,255,0)');
+    g.addColorStop(1,`rgba(255,240,220,${s.life*.8})`);
+    ctx.strokeStyle=g;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(s.x,s.y);
+    ctx.lineTo(s.x-s.len*(s.vx/(s.vx+s.vy)), s.y-s.len*(s.vy/(s.vx+s.vy)));
+    ctx.stroke();
+  });
+
+  requestAnimationFrame(render);
+}
+render();
+
+/* ══════════════════════════════
+   CSS NEBULA BLOBS
+══════════════════════════════ */
+const nb = document.getElementById('nebulas');
+const nebulaData=[
+  {c:'rgba(139,63,168,0.18)',w:500,h:380,t:'-5%',l:'-8%',dx:'40px',dy:'30px',ds:'1.12',nd:'22s'},
+  {c:'rgba(255,77,112,0.13)',w:420,h:320,t:'10%', l:'55%', dx:'-35px',dy:'25px',ds:'1.08',nd:'28s'},
+  {c:'rgba(58,111,216,0.14)',w:380,h:300,t:'55%', l:'5%',  dx:'50px',dy:'-20px',ds:'1.15',nd:'19s'},
+  {c:'rgba(46,196,182,0.10)',w:300,h:250,t:'60%', l:'65%', dx:'-25px',dy:'-35px',ds:'1.1', nd:'25s'},
+  {c:'rgba(200,80,150,0.12)',w:350,h:280,t:'30%', l:'30%', dx:'20px',dy:'40px',ds:'1.05',nd:'32s'},
+  {c:'rgba(80,60,200,0.09)',w:260,h:200,t:'75%', l:'40%', dx:'-40px',dy:'15px',ds:'1.18',nd:'17s'},
+];
+nebulaData.forEach(d=>{
+  const div=document.createElement('div');
+  div.className='nebula-blob';
+  div.style.cssText=`
+    width:${d.w}px;height:${d.h}px;
+    background:radial-gradient(ellipse at center,${d.c},transparent 70%);
+    top:${d.t};left:${d.l};
+    --dx:${d.dx};--dy:${d.dy};--ds:${d.ds};--nd:${d.nd};
+  `;
+  nb.appendChild(div);
+});
+
+/* ══════════════════════════════
+   ORBIT RINGS + DOTS
+══════════════════════════════ */
+const orbitEl = document.getElementById('orbits');
+const orbitDefs=[
+  {r:120,size:4,color:'rgba(255,107,138,0.8)',speed:'12s',start:'0deg',glow:'rgba(255,107,138,0.6)'},
+  {r:155,size:3,color:'rgba(240,201,106,0.8)',speed:'20s',start:'120deg',glow:'rgba(240,201,106,0.5)'},
+  {r:180,size:3,color:'rgba(139,63,168,0.8)',speed:'16s',start:'240deg',glow:'rgba(139,63,168,0.5)'},
+  {r:195,size:2.5,color:'rgba(100,200,255,0.7)',speed:'28s',start:'60deg',glow:'rgba(100,200,255,0.4)'},
+];
+
+// We'll do orbiting via JS animation instead for accurate circular paths
+const orbitCanvas = document.createElement('canvas');
+orbitCanvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
+orbitEl.appendChild(orbitCanvas);
+const octx = orbitCanvas.getContext('2d');
+
+function resizeOrbit(){
+  orbitCanvas.width  = orbitEl.offsetWidth  || 400;
+  orbitCanvas.height = orbitEl.offsetHeight || 600;
+}
+
+// We'll use the window-level canvas for orbits too — simpler
+// Actually let's just overlay on body
+const orbitOverlay = document.createElement('canvas');
+orbitOverlay.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:8;';
+document.body.appendChild(orbitOverlay);
+const oCtx = orbitOverlay.getContext('2d');
+
+function resizeOverlay(){
+  orbitOverlay.width  = window.innerWidth;
+  orbitOverlay.height = window.innerHeight;
+}
+resizeOverlay();
+window.addEventListener('resize', resizeOverlay);
+
+let orbitAngle = 0;
+function drawOrbits(){
+  oCtx.clearRect(0,0,orbitOverlay.width, orbitOverlay.height);
+  const cx = orbitOverlay.width/2;
+  const cy = orbitOverlay.height/2 - 80; // approx flower center
+
+  orbitDefs.forEach((od,i)=>{
+    const speed = 0.0008*(1+i*.3)*(i%2===0?1:-1);
+    const ang   = orbitAngle * speed * (12/(parseFloat(od.speed)));
+
+    // Faint ring
+    oCtx.save();
+    oCtx.strokeStyle=od.color.replace('0.8','0.08').replace('0.7','0.06');
+    oCtx.lineWidth=.5;
+    oCtx.beginPath();
+    oCtx.ellipse(cx,cy,od.r,od.r*.35,0,0,Math.PI*2);
+    oCtx.stroke();
+    oCtx.restore();
+
+    // Orbiting dot
+    const startRad = (parseFloat(od.start)/180)*Math.PI + ang;
+    const dx2 = Math.cos(startRad)*od.r;
+    const dy2 = Math.sin(startRad)*od.r*.35;
+    const dotX = cx+dx2;
+    const dotY = cy+dy2;
+
+    // Glow
+    const grd = oCtx.createRadialGradient(dotX,dotY,0,dotX,dotY,od.size*4);
+    grd.addColorStop(0, od.glow);
+    grd.addColorStop(1,'transparent');
+    oCtx.fillStyle=grd;
+    oCtx.beginPath();
+    oCtx.arc(dotX,dotY,od.size*4,0,Math.PI*2);
+    oCtx.fill();
+
+    // Dot core
+    oCtx.fillStyle=od.color;
+    oCtx.beginPath();
+    oCtx.arc(dotX,dotY,od.size,0,Math.PI*2);
+    oCtx.fill();
+  });
+
+  orbitAngle++;
+  requestAnimationFrame(drawOrbits);
+}
+drawOrbits();
+
+/* ══════════════════════════════
+   CSS SHOOTING STARS (extra)
+══════════════════════════════ */
+const shootsEl=document.getElementById('shoots');
+const shootCfgs=[
+  {sy:'8%',sw:'180px',sd:'7s',sdelay:'1s',srot:'-18deg'},
+  {sy:'22%',sw:'120px',sd:'9s',sdelay:'4s',srot:'-22deg'},
+  {sy:'45%',sw:'150px',sd:'11s',sdelay:'7s',srot:'-15deg'},
+  {sy:'12%',sw:'100px',sd:'8s',sdelay:'2.5s',srot:'-25deg'},
+  {sy:'65%',sw:'130px',sd:'13s',sdelay:'5s',srot:'-12deg'},
+];
+shootCfgs.forEach(s=>{
+  const el=document.createElement('div');
+  el.className='shoot';
+  el.style.cssText=`--sy:${s.sy};--sw:${s.sw};--sd:${s.sd};--sdelay:${s.sdelay};--srot:${s.srot};width:${s.sw};`;
+  shootsEl.appendChild(el);
+});
+
+/* Mouse parallax on nebula */
+document.addEventListener('mousemove',e=>{
+  const mx=(e.clientX/window.innerWidth-.5)*.04;
+  const my=(e.clientY/window.innerHeight-.5)*.04;
+  nb.style.transform=`translate(${mx*30}px,${my*20}px)`;
+});
+</script>
+</body>
+</html>
